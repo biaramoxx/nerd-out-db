@@ -13,6 +13,7 @@ import { Route as QuizRouteImport } from './routes/quiz'
 import { Route as PlaygroundRouteImport } from './routes/playground'
 import { Route as AulasRouteImport } from './routes/aulas'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SitemapXmlRouteImport } from './routes/sitemap.xml'
 import { Route as AulasIdRouteImport } from './routes/aulas.$id'
 
 const QuizRoute = QuizRouteImport.update({
@@ -35,6 +36,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SitemapXmlRoute = SitemapXmlRouteImport.update({
+  id: '/sitemap/xml',
+  path: '/sitemap/xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AulasIdRoute = AulasIdRouteImport.update({
   id: '/$id',
   path: '/$id',
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/playground': typeof PlaygroundRoute
   '/quiz': typeof QuizRoute
   '/aulas/$id': typeof AulasIdRoute
+  '/sitemap/xml': typeof SitemapXmlRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/playground': typeof PlaygroundRoute
   '/quiz': typeof QuizRoute
   '/aulas/$id': typeof AulasIdRoute
+  '/sitemap/xml': typeof SitemapXmlRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +70,27 @@ export interface FileRoutesById {
   '/playground': typeof PlaygroundRoute
   '/quiz': typeof QuizRoute
   '/aulas/$id': typeof AulasIdRoute
+  '/sitemap/xml': typeof SitemapXmlRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/aulas' | '/playground' | '/quiz' | '/aulas/$id'
+  fullPaths:
+    | '/'
+    | '/aulas'
+    | '/playground'
+    | '/quiz'
+    | '/aulas/$id'
+    | '/sitemap/xml'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/aulas' | '/playground' | '/quiz' | '/aulas/$id'
-  id: '__root__' | '/' | '/aulas' | '/playground' | '/quiz' | '/aulas/$id'
+  to: '/' | '/aulas' | '/playground' | '/quiz' | '/aulas/$id' | '/sitemap/xml'
+  id:
+    | '__root__'
+    | '/'
+    | '/aulas'
+    | '/playground'
+    | '/quiz'
+    | '/aulas/$id'
+    | '/sitemap/xml'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -76,6 +98,7 @@ export interface RootRouteChildren {
   AulasRoute: typeof AulasRouteWithChildren
   PlaygroundRoute: typeof PlaygroundRoute
   QuizRoute: typeof QuizRoute
+  SitemapXmlRoute: typeof SitemapXmlRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -108,6 +131,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sitemap/xml': {
+      id: '/sitemap/xml'
+      path: '/sitemap/xml'
+      fullPath: '/sitemap/xml'
+      preLoaderRoute: typeof SitemapXmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/aulas/$id': {
       id: '/aulas/$id'
       path: '/$id'
@@ -133,6 +163,7 @@ const rootRouteChildren: RootRouteChildren = {
   AulasRoute: AulasRouteWithChildren,
   PlaygroundRoute: PlaygroundRoute,
   QuizRoute: QuizRoute,
+  SitemapXmlRoute: SitemapXmlRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
