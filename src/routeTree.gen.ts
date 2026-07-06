@@ -9,10 +9,16 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as QuizRouteImport } from './routes/quiz'
 import { Route as AulasRouteImport } from './routes/aulas'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AulasIdRouteImport } from './routes/aulas.$id'
 
+const QuizRoute = QuizRouteImport.update({
+  id: '/quiz',
+  path: '/quiz',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AulasRoute = AulasRouteImport.update({
   id: '/aulas',
   path: '/aulas',
@@ -32,34 +38,45 @@ const AulasIdRoute = AulasIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/aulas': typeof AulasRouteWithChildren
+  '/quiz': typeof QuizRoute
   '/aulas/$id': typeof AulasIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/aulas': typeof AulasRouteWithChildren
+  '/quiz': typeof QuizRoute
   '/aulas/$id': typeof AulasIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/aulas': typeof AulasRouteWithChildren
+  '/quiz': typeof QuizRoute
   '/aulas/$id': typeof AulasIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/aulas' | '/aulas/$id'
+  fullPaths: '/' | '/aulas' | '/quiz' | '/aulas/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/aulas' | '/aulas/$id'
-  id: '__root__' | '/' | '/aulas' | '/aulas/$id'
+  to: '/' | '/aulas' | '/quiz' | '/aulas/$id'
+  id: '__root__' | '/' | '/aulas' | '/quiz' | '/aulas/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AulasRoute: typeof AulasRouteWithChildren
+  QuizRoute: typeof QuizRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/quiz': {
+      id: '/quiz'
+      path: '/quiz'
+      fullPath: '/quiz'
+      preLoaderRoute: typeof QuizRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/aulas': {
       id: '/aulas'
       path: '/aulas'
@@ -97,6 +114,7 @@ const AulasRouteWithChildren = AulasRoute._addFileChildren(AulasRouteChildren)
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AulasRoute: AulasRouteWithChildren,
+  QuizRoute: QuizRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
