@@ -1,6 +1,6 @@
 import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { ArrowLeft, ChevronRight, BookOpen, Code2, Table2 } from "lucide-react";
-import { lessons } from "../lib/lessons";
+import { lessons, type LessonSection } from "../lib/lessons";
 
 export const Route = createFileRoute("/aulas/$id")({
   loader: ({ params }) => {
@@ -8,14 +8,17 @@ export const Route = createFileRoute("/aulas/$id")({
     if (!lesson) throw notFound();
     return lesson;
   },
-  head: ({ loaderData }) => ({
-    meta: [
-      { title: `${loaderData.title} — DBAcademy` },
-      { name: "description", content: loaderData.description },
-      { property: "og:title", content: `${loaderData.title} — DBAcademy` },
-      { property: "og:description", content: loaderData.description },
-    ],
-  }),
+  head: ({ loaderData }) => {
+    if (!loaderData) return {};
+    return {
+      meta: [
+        { title: `${loaderData.title} — DBAcademy` },
+        { name: "description", content: loaderData.description },
+        { property: "og:title", content: `${loaderData.title} — DBAcademy` },
+        { property: "og:description", content: loaderData.description },
+      ],
+    };
+  },
   notFoundComponent: () => (
     <div className="flex min-h-[50vh] items-center justify-center px-4">
       <div className="text-center">
@@ -39,14 +42,12 @@ function LessonPage() {
   return (
     <div className="px-4 py-10 sm:px-6 sm:py-16">
       <div className="mx-auto max-w-3xl">
-        {/* Breadcrumb */}
         <div className="mb-6 flex items-center gap-2 text-sm text-muted-foreground">
           <Link to="/aulas" className="hover:text-foreground">Aulas</Link>
           <ChevronRight className="h-3.5 w-3.5" />
           <span className="text-foreground">{lesson.title}</span>
         </div>
 
-        {/* Header */}
         <div className="mb-10">
           <span className="mb-2 inline-block rounded-md bg-primary/10 px-2.5 py-1 text-xs font-medium text-primary">
             {lesson.category} — Aula {lesson.order}
@@ -57,9 +58,8 @@ function LessonPage() {
           <p className="mt-3 text-lg text-muted-foreground">{lesson.description}</p>
         </div>
 
-        {/* Content */}
         <div className="space-y-10">
-          {lesson.content.map((section, idx) => (
+          {lesson.content.map((section: LessonSection, idx: number) => (
             <article
               key={idx}
               className="animate-fade-in-up rounded-xl border border-border bg-card p-6 shadow-sm"
@@ -70,7 +70,7 @@ function LessonPage() {
                 {section.title}
               </h2>
               <div className="space-y-4">
-                {section.body.split("\n\n").map((paragraph, pIdx) => (
+                {section.body.split("\n\n").map((paragraph: string, pIdx: number) => (
                   <p key={pIdx} className="whitespace-pre-line leading-relaxed text-foreground/90">
                     {paragraph}
                   </p>
@@ -99,7 +99,7 @@ function LessonPage() {
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="border-b border-border bg-muted/30">
-                          {section.table.headers.map((h, hIdx) => (
+                          {section.table.headers.map((h: string, hIdx: number) => (
                             <th key={hIdx} className="px-4 py-2.5 text-left font-semibold text-foreground">
                               {h}
                             </th>
@@ -107,9 +107,9 @@ function LessonPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        {section.table.rows.map((row, rIdx) => (
+                        {section.table.rows.map((row: string[], rIdx: number) => (
                           <tr key={rIdx} className="border-b border-border last:border-0">
-                            {row.map((cell, cIdx) => (
+                            {row.map((cell: string, cIdx: number) => (
                               <td key={cIdx} className="px-4 py-2.5 text-muted-foreground">
                                 {cell}
                               </td>
@@ -125,7 +125,6 @@ function LessonPage() {
           ))}
         </div>
 
-        {/* Navigation */}
         <div className="mt-12 flex items-center justify-between gap-4 border-t border-border pt-8">
           {prevLesson ? (
             <Link
