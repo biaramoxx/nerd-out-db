@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as AulasRouteImport } from './routes/aulas'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AulasIdRouteImport } from './routes/aulas.$id'
 
 const AulasRoute = AulasRouteImport.update({
   id: '/aulas',
@@ -22,31 +23,39 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AulasIdRoute = AulasIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AulasRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/aulas': typeof AulasRoute
+  '/aulas': typeof AulasRouteWithChildren
+  '/aulas/$id': typeof AulasIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/aulas': typeof AulasRoute
+  '/aulas': typeof AulasRouteWithChildren
+  '/aulas/$id': typeof AulasIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/aulas': typeof AulasRoute
+  '/aulas': typeof AulasRouteWithChildren
+  '/aulas/$id': typeof AulasIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/aulas'
+  fullPaths: '/' | '/aulas' | '/aulas/$id'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/aulas'
-  id: '__root__' | '/' | '/aulas'
+  to: '/' | '/aulas' | '/aulas/$id'
+  id: '__root__' | '/' | '/aulas' | '/aulas/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AulasRoute: typeof AulasRoute
+  AulasRoute: typeof AulasRouteWithChildren
 }
 
 declare module '@tanstack/react-router' {
@@ -65,12 +74,29 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/aulas/$id': {
+      id: '/aulas/$id'
+      path: '/$id'
+      fullPath: '/aulas/$id'
+      preLoaderRoute: typeof AulasIdRouteImport
+      parentRoute: typeof AulasRoute
+    }
   }
 }
 
+interface AulasRouteChildren {
+  AulasIdRoute: typeof AulasIdRoute
+}
+
+const AulasRouteChildren: AulasRouteChildren = {
+  AulasIdRoute: AulasIdRoute,
+}
+
+const AulasRouteWithChildren = AulasRoute._addFileChildren(AulasRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AulasRoute: AulasRoute,
+  AulasRoute: AulasRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
