@@ -9,38 +9,121 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as QuizRouteImport } from './routes/quiz'
+import { Route as PlaygroundRouteImport } from './routes/playground'
+import { Route as AulasRouteImport } from './routes/aulas'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as SitemapXmlRouteImport } from './routes/sitemap.xml'
+import { Route as AulasIdRouteImport } from './routes/aulas.$id'
 
+const QuizRoute = QuizRouteImport.update({
+  id: '/quiz',
+  path: '/quiz',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PlaygroundRoute = PlaygroundRouteImport.update({
+  id: '/playground',
+  path: '/playground',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AulasRoute = AulasRouteImport.update({
+  id: '/aulas',
+  path: '/aulas',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SitemapXmlRoute = SitemapXmlRouteImport.update({
+  id: '/sitemap/xml',
+  path: '/sitemap/xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AulasIdRoute = AulasIdRouteImport.update({
+  id: '/$id',
+  path: '/$id',
+  getParentRoute: () => AulasRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
+  '/aulas': typeof AulasRouteWithChildren
+  '/playground': typeof PlaygroundRoute
+  '/quiz': typeof QuizRoute
+  '/aulas/$id': typeof AulasIdRoute
+  '/sitemap/xml': typeof SitemapXmlRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
+  '/aulas': typeof AulasRouteWithChildren
+  '/playground': typeof PlaygroundRoute
+  '/quiz': typeof QuizRoute
+  '/aulas/$id': typeof AulasIdRoute
+  '/sitemap/xml': typeof SitemapXmlRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/aulas': typeof AulasRouteWithChildren
+  '/playground': typeof PlaygroundRoute
+  '/quiz': typeof QuizRoute
+  '/aulas/$id': typeof AulasIdRoute
+  '/sitemap/xml': typeof SitemapXmlRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/'
+  fullPaths:
+    | '/'
+    | '/aulas'
+    | '/playground'
+    | '/quiz'
+    | '/aulas/$id'
+    | '/sitemap/xml'
   fileRoutesByTo: FileRoutesByTo
-  to: '/'
-  id: '__root__' | '/'
+  to: '/' | '/aulas' | '/playground' | '/quiz' | '/aulas/$id' | '/sitemap/xml'
+  id:
+    | '__root__'
+    | '/'
+    | '/aulas'
+    | '/playground'
+    | '/quiz'
+    | '/aulas/$id'
+    | '/sitemap/xml'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AulasRoute: typeof AulasRouteWithChildren
+  PlaygroundRoute: typeof PlaygroundRoute
+  QuizRoute: typeof QuizRoute
+  SitemapXmlRoute: typeof SitemapXmlRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/quiz': {
+      id: '/quiz'
+      path: '/quiz'
+      fullPath: '/quiz'
+      preLoaderRoute: typeof QuizRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/playground': {
+      id: '/playground'
+      path: '/playground'
+      fullPath: '/playground'
+      preLoaderRoute: typeof PlaygroundRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/aulas': {
+      id: '/aulas'
+      path: '/aulas'
+      fullPath: '/aulas'
+      preLoaderRoute: typeof AulasRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/': {
       id: '/'
       path: '/'
@@ -48,11 +131,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sitemap/xml': {
+      id: '/sitemap/xml'
+      path: '/sitemap/xml'
+      fullPath: '/sitemap/xml'
+      preLoaderRoute: typeof SitemapXmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/aulas/$id': {
+      id: '/aulas/$id'
+      path: '/$id'
+      fullPath: '/aulas/$id'
+      preLoaderRoute: typeof AulasIdRouteImport
+      parentRoute: typeof AulasRoute
+    }
   }
 }
 
+interface AulasRouteChildren {
+  AulasIdRoute: typeof AulasIdRoute
+}
+
+const AulasRouteChildren: AulasRouteChildren = {
+  AulasIdRoute: AulasIdRoute,
+}
+
+const AulasRouteWithChildren = AulasRoute._addFileChildren(AulasRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AulasRoute: AulasRouteWithChildren,
+  PlaygroundRoute: PlaygroundRoute,
+  QuizRoute: QuizRoute,
+  SitemapXmlRoute: SitemapXmlRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
